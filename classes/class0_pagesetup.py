@@ -1,4 +1,5 @@
 import streamlit as st
+from classes.class9_utilities import Utilities
 from streamlit_extras.stylable_container import stylable_container as sc
 from typing import Literal
 
@@ -17,6 +18,7 @@ class PageSetup:
         self._display_overview()
     
     def display_manual(self):
+        self.get_backgroud_image(image_type="logo")
         self._display_header_manual(divider="True", title="SpartakusAI", subtitle= "Welcome")
 
     def _initialize_page_attributes(self):
@@ -32,9 +34,10 @@ class PageSetup:
         self.stylepath = "config/style.css"
 
     def _initialize_styles(self):
-        self.style1 = "{border: 2px solid rgba(40, 94, 159, 0.75); background-color: rgba(255, 255, 255, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
-        self.style2 = "{border: 2px solid rgba(0, 0, 0, 0.2); background-color: rgba(40, 94, 159, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
-
+        self.container_style1 = "{border: 2px solid rgba(40, 94, 159, 0.75); background-color: rgba(255, 255, 255, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
+        self.container_style2 = "{border: 2px solid rgba(0, 0, 0, 0.2); background-color: rgba(40, 94, 159, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
+        self.background_style1 = "<style>.stApp {{background-image: url('data:image/png;base64,'{encoded_string}');background-size: cover;background-position: center;background-repeat: no-repeat;}}</style>"
+    
     def _initialize_page_style(self):
         with open(self.stylepath) as css:
             self.pagestyle = st.markdown(f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -88,6 +91,17 @@ class PageSetup:
             self.header_display = st.markdown(f"""<span style="font-weight: bold; color:#333333; font-size:1.3em;">{text}</span>""", unsafe_allow_html=True)
         elif type == "green": 
             self.header_display = st.markdown(f"""<span style="font-weight: bold; color:#00b084; font-size:1.3em;">{text}</span>""", unsafe_allow_html=True)
+    
+    def get_backgroud_image(self, image_type: Literal["logo", "coach", "wrestler"]):
+        if image_type == "logo":
+            self.backgroundimagepath = st.secrets.images.logo
+        elif image_type == "coach":
+            self.backgroundimagepath = st.secrets.images.umcoach
+        elif image_type == "wrestler":
+            self.backgroundimagepath = st.secrets.images.umwrestler
+        self.backgroundimageencoded = Utilities.encode_image(image_path=self.backgroundimagepath)
+        self.backgroundstyle = self.background_style1.format(encoded_string=self.backgroundimageencoded)
+        st.markdown(self.backgroundstyle, unsafe_allow_html=True)
 
     
        

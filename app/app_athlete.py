@@ -27,7 +27,7 @@ def app_athlete():
         """
         Set the background of the Streamlit app using a locally stored image.
         """
-        image_path = 'assets/umich/wrestler.png'  # Update this path when new image is created
+        image_path = st.secrets.images.umwrestler  # Update this path when new image is created
         with open(image_path, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read()).decode()
         
