@@ -36,6 +36,8 @@ class PageSetup:
     def _initialize_styles(self):
         self.container_style1 = "{border: 2px solid rgba(40, 94, 159, 0.75); background-color: rgba(255, 255, 255, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
         self.container_style2 = "{border: 2px solid rgba(0, 0, 0, 0.2); background-color: rgba(40, 94, 159, 0.75); border-radius: 0.5rem; padding: 1em; overflow: hidden; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; box-sizing: border-box;}"
+        self.container_style3 = "{background-color: #708090CC; color: #001F3F; border: 2px solid #FFCB05; border-radius: 5px; box-shadow: 0px 0px 15px 3px #FFAA00; padding: 5px;}"
+        self.container_style4 = "{background-color: #BECBEA; color: #00000; border: 2px solid #FFCB05; border-radius: 3px; padding: 5px;}"
         self.background_style1 = "<style>.stApp {{background-image: url('data:image/png;base64,'{encoded_string}');background-size: cover;background-position: center;background-repeat: no-repeat;}}</style>"
     
     def _initialize_page_style(self):
@@ -73,10 +75,21 @@ class PageSetup:
         st.markdown(body=self.description)
         st.divider()
     
-    def get_styled_container(self, height: int = None, border: bool=False):
+    def get_styled_container1(self, height: int = None, border: bool=False):
         outerstyle = sc(key="outercontainer", css_styles=self.style2)
         with outerstyle:
             innerstyle = sc(key="innercontainer", css_styles=self.style1)
+            with innerstyle:
+                if height is not None:
+                    container = st.container(height=height, border=border)
+                else:
+                    container = st.container(border=border)
+        return container
+    
+    def get_styled_container2(self, height: int=None, border: bool=False):
+        outerstyle = sc(key="outercontainer2", css_styles=self.container_style3)
+        with outerstyle:
+            innerstyle = sc(key="innercontainer2", css_styles=self.style4)
             with innerstyle:
                 if height is not None:
                     container = st.container(height=height, border=border)
@@ -102,7 +115,4 @@ class PageSetup:
         self.backgroundimageencoded = Utilities.encode_image(image_path=self.backgroundimagepath)
         self.backgroundstyle = self.background_style1.format(encoded_string=self.backgroundimageencoded)
         st.markdown(self.backgroundstyle, unsafe_allow_html=True)
-
-    
-       
 
