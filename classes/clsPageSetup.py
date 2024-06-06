@@ -19,6 +19,7 @@ class PageSetup:
 
     def get_standard(self):
         self._initialize_standard_attributes()
+        background = PageUtilities.get_background(type="logo")
         header = PageUtilities.get_standardheader_section(pagenumber=self.pagenumber)
         overview = PageUtilities.get_overview_section(pagenumber=self.pagenumber)
 
