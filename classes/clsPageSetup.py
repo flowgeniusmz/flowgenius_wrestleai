@@ -6,51 +6,45 @@ from classes import clsUtilities as ut
 
 
 class PageSetup:
-    def __init__(self):
-        self._initialize_attributes()
-
-    def get(self, page_number: int):
-        self.title = st.secrets.titles[page_number]
-        self.subtitle = st.secrets.subtitles[page_number]
-        self.path = st.secrets.paths[page_number]
-        self.icon = st.secrets.icons[page_number]
-        self.header = st.secrets.headers[page_number]
-        self.about = st.secrets.abouts[page_number]
-        self.description = st.secrets.descriptions[page_number]
+    def __init__(self, type: Literal["standard", "custom"], page_number: int):
+        self.type = type
+        self.pagenumber = page_number
+        self.controller()
     
-    @staticmethod
-    def get_background(type: Literal["logo", "wrestler", "coach"]):
-        if type == "logo":
-            path = st.secrets.paths.logo
-        elif type == "coach":
-            path = st.secrets.paths.coach
-        elif type == "wrestler":
-            path = st.secrets.paths.wrestler
-        else:
-            path = st.secrets.paths.logo
-        encoded_string = ut.Utilities.encode_image(image_path=path)
-        background = st.secrets.styles.style_background6.format(encoded_string)
-        st.markdown(body=background, unsafe_allow_html=True)
+    def controller(self):
+        if self.type == "standard":
+            self.get_standard()
+        elif self.type == "custom":
+            self.get_custom()
 
-    @staticmethod
-    def get_pagestyling():
-        path = st.secrets.paths.css
-        with open(path) as file:
-            css_content = file.read()
-            css = st.secrets.styles.style_css1.format(css_content)
-            st.markdown(body=css, unsafe_allow_html=True)
+    def get_standard(self):
+        self._initialize_standard_attributes()
+        header = PageUtilities.get_standardheader_section(pagenumber=self.pagenumber)
+        overview = PageUtilities.get_overview_section(pagenumber=self.pagenumber)
 
+    def get_custom(self):
+        self._initialize_custom_attributes()
 
-    @staticmethod
-    def get_header(type: Literal["blue", "gray", "green"], text: str):
-        if type == "blue":
-            content = st.secrets.styles.style_header3_blue.format(text)
-        elif type == "gray":
-            content = st.secrets.styles.style_header2_gray.format(text)
-        elif type == "green":
-            content = st.secrets.styles.style_header1_green.format(text)
-        header = st.markdown(body=content, unsafe_allow_html=True)
-        return header
+    def _initialize_standard_attributes(self):
+        self.title = st.secrets.pages.titles[self.pagenumber]
+        self.subtitle = st.secrets.pages.subtitles[self.pagenumber]
+        self.path = st.secrets.pages.paths[self.pagenumber]
+        self.icon = st.secrets.pages.icons[self.pagenumber]
+        self.header = st.secrets.pages.headers[self.pagenumber]
+        self.about = st.secrets.pages.abouts[self.pagenumber]
+        self.description = st.secrets.pages.descriptions[self.pagenumber]
+    
+    def _display_standard(self):
+        title = PageUtilities.auto_title(pagenumber=self.pagenumber)
+        overview = PageUtilities.get_overview_section(pagenumber=self.pagenumber)
+
+    def _initialize_custom_attributes(self):
+        self.title = None
+
+    
+   
+    
+    
 
 class PageUtilities:
     @staticmethod
@@ -107,7 +101,7 @@ class PageUtilities:
     
     @staticmethod
     def get_popover_menu(pagenumber: int):
-        menu = st.popover(label="Menu")
+        menu = st.popover(label="Menu", use_container_width=True)
         page_count = st.secrets.pages.count
         with menu:
             for i in range(page_count):
@@ -171,8 +165,8 @@ class PageUtilities:
 
     @staticmethod
     def get_styled_container1(height: int=None, border: bool=False):
-        styleouter = st.secrets.styles.style_container2
-        styleinner = st.secrets.styles.style_container1
+        styleouter = st.secrets.styles.style_container1
+        styleinner = st.secrets.styles.style_container2
         outer = sc(key="outer", css_styles=styleouter)
         with outer:
             inner = sc(key="inner", css_styles=styleinner)
@@ -182,3 +176,28 @@ class PageUtilities:
                 else:
                     container = st.container(border=border)
         return container
+    
+    @staticmethod
+    def get_overview_section(pagenumber: int):
+        header_text = st.secrets.pages.headers[pagenumber]
+        description_text = st.secrets.pages.descriptions[pagenumber]
+        maincontainer = st.container(border=False)
+        with maincontainer:
+            header = PageUtilities.get_header(type="gray", text=header_text)
+            overviewcontainer = PageUtilities.get_styled_container1()
+            with overviewcontainer:
+                description = st.markdown(description_text)
+        st.divider()
+        return maincontainer
+    
+    @staticmethod
+    def get_standardheader_section(pagenumber: int):
+        header_container = st.container(border=False)
+        with header_container:
+            header_cols = st.columns([10,3])
+            with header_cols[0]:
+                title = PageUtilities.auto_title(pagenumber=pagenumber, div=False)
+            with header_cols[1]:
+                menu = PageUtilities.get_popover_menu(pagenumber=pagenumber)
+        st.divider()
+        return header_container
