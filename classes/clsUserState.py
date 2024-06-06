@@ -14,7 +14,7 @@ class UserState:
         self.userstatecomplete = st.session_state.userstatecomplete
 
     def _initialize_background(self):
-        self.background = ps.PageSetup.get_background(type="logo")
+        self.background = ps.PageUtilities.get_background(type="logo")
         self.header = ps.PageUtilities.get_header_titlewithmenu(title="WrestleAI", subtitle="AI Powered Sports Assistant", menu_type="user", pagenumber=0)
 
     def _initialize_userstate(self):
