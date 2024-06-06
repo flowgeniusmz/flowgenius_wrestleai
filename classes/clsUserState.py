@@ -14,7 +14,8 @@ class UserState:
         self.userstatecomplete = st.session_state.userstatecomplete
 
     def _initialize_background(self):
-        ps.PageSetup.get_background(type="logo")
+        self.background = ps.PageSetup.get_background(type="logo")
+        self.header = ps.PageUtilities.get_header_titlewithmenu(title="WrestleAI", subtitle="AI Powered Sports Assistant", menu_type="user", pagenumber=0)
 
     def _initialize_userstate(self):
         if self.userstatecomplete:
@@ -41,9 +42,24 @@ class UserState:
 
     
     def _userstate1(self):
-        st.markdown("Initial Render")
-        newbtn = st.button("new")
-        existbtn = st.button("exist")
+        main_container = st.container(border=False)
+        with main_container:
+            buttoncontainer = ps.PageUtilities.get_styled_container1()
+            with buttoncontainer:
+                newbtn = st.button("new", use_container_width=True)
+                existbtn = st.button("exist", use_container_width=True)
+            st.divider()
+            chatcontainer = ps.PageUtilities.get_styled_container1()
+            with chatcontainer:
+                dispcont = st.container(border=False, height=300)
+                with dispcont:
+                    with st.chat_message("assistant"):
+                        st.markdown("Welcome to WrestleAI. Type below to try it out!")
+            pcont = st.container(border=False, height=100)
+            with pcont:
+                guestprompt = st.chat_input(placeholder="Type here to try the assistant!")
+            st.divider()
+                
         if newbtn:
             st.session_state.usertype = "new"
             self._userstate_callback(next_userstate=2)
@@ -51,7 +67,7 @@ class UserState:
             st.session_state.usertype = "existing"
             self._userstate_callback(next_userstate=4)
 
-    @st.experimental_dialog(title="New Account Information", width="large",)
+    @st.experimental_dialog(title="New Account Information", width="large")
     def _userstate2(self):
         ps.PageUtilities.get_background_dialog(type="dialog1")
         infoheader = ps.PageUtilities.get_header(type="blue", text="Please Complete Account Information Below")
@@ -100,6 +116,3 @@ class UserState:
     def _userstate_callback(self, next_userstate):
         st.session_state.userstate = next_userstate
         st.rerun()
-
-    
-
